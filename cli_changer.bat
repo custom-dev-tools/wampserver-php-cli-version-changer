@@ -8,8 +8,8 @@ rem +------------------------------------------------+
 rem |            User Defined Variable(s)            |
 rem +------------------------------------------------+
 
-rem WampServer install path.
-set $pathToInstall=C:\wamp
+rem WampServer custom install path.
+set $customInstallPath=
 
 
 
@@ -20,9 +20,12 @@ rem +------------------------------------------------+
 rem ---------------------
 rem   Default Variables
 rem ---------------------
-set $scriptVersion=1.0.0
+set $scriptVersion=1.1.0
 
-set $pathToPhps=bin\php\
+set $defaultInstallPath[0]=C:\wamp
+set $defaultInstallPath[1]=C:\wamp64
+
+set $pathToPhpFolders=bin\php
 
 set $cliMode=0
 
@@ -30,6 +33,70 @@ set $colorNormal=08
 set $colorSuccess=0A
 set $colorWarning=0E
 set $colorFailure=0C
+
+rem Set the title.
+title WampServer PHP CLI Version Changer v%$scriptVersion%
+
+
+rem -----------------
+rem   Install Paths
+rem -----------------
+
+rem Test for a custom install path.
+if defined $customInstallPath (
+
+    rem Check if the folder exists.
+    if not exist "%$customInstallPath%" goto invalidCustomInstallPathGiven
+
+    set $installPath=%$customInstallPath%
+)
+
+rem Test for the first default install path.
+if not defined $installPath (
+
+    rem Check if the first default install path exists.
+    if exist %$defaultInstallPath[0]% (
+        set $installPath=%$defaultInstallPath[0]%
+    )
+)
+
+rem Test for the second default install path.
+if not defined $installPath (
+
+    rem Check if the second default install path exists.
+    if exist %$defaultInstallPath[1]% (
+        set $installPath=%$defaultInstallPath[1]%
+    )
+)
+
+rem Exit if unable to find installation path.
+if not defined $installPath goto defaultInstallPathsMissing
+
+
+rem -------------------
+rem   PHP Folder Path
+rem -------------------
+
+rem Set the $pathToPhpFolders path.
+if %$installPath:~-1% neq \ (
+    set $pathToPhpFolders=%$installPath%\%$pathToPhpFolders%
+) else (
+    set $pathToPhpFolders=%$installPath%%$pathToPhpFolders%
+)
+
+rem Check the $pathToPhpFolders path exists.
+if not exist "%$pathToPhpFolders%" goto invalidPathToPhpFoldersGiven
+
+rem Iterate through folders in the the $pathToPhpFolders path adding them to the availablePhpVersionsArray.
+set counter=0
+
+for /F "delims=" %%a in ('dir %$pathToPhpFolders% /AD /B') do (
+    set /A counter=counter+1
+    set $availablePhpVersionsArray[!counter!]=%%a
+)
+
+rem Set the last available PHP versions array id.
+set $lastAvailablePhpVersionsArrayId=!counter!
 
 
 rem ----------------------------
@@ -57,34 +124,6 @@ rem Set the last users environmental path array id.
 set $lastUsersEnvironmentalPathArrayId=!counter!
 
 
-rem ---------------------------------
-rem   Available PHP Folder Versions
-rem ---------------------------------
-
-rem Set the $pathToPhps path.
-if %$pathToInstall:~-1% neq \ (
-    set $pathToPhps=%$pathToInstall%\%$pathToPhps%
-) else (
-    set $pathToPhps=%$pathToInstall%%$pathToPhps%
-)
-
-rem Check the $pathToPhps path exists.
-PUSHD %$pathToPhps% && POPD || (
-    goto invalidPathToPhpsGiven
-)
-
-rem Iterate through folders in the the $pathToPhps path adding them to the availablePhpVersionsArray.
-set counter=0
-
-for /F "delims=" %%a in ('dir %$pathToPhps% /AD /B') do (
-    set /A counter=counter+1
-    set $availablePhpVersionsArray[!counter!]=%%a
-)
-
-rem Set the last available PHP versions array id.
-set $lastAvailablePhpVersionsArrayId=!counter!
-
-
 rem ----------------------------
 rem   Match PHP Folder Version
 rem ----------------------------
@@ -99,7 +138,7 @@ for /L %%a in (1,1,%$lastUsersEnvironmentalPathArrayId%) do (
     rem Loop through the $availablePhpVersionsArray.
     for /L %%b in (1,1,%$lastAvailablePhpVersionsArrayId%) do (
         rem Check if the users environmental path string matches the path to the available PHP version string.
-        if "!$usersEnvironmentalPathArray[%%a]!"=="%$pathToPhps%!$availablePhpVersionsArray[%%b]!" (
+        if "!$usersEnvironmentalPathArray[%%a]!"=="%$pathToPhpFolders%!$availablePhpVersionsArray[%%b]!" (
             rem Force the 'for' command parameters into type 'integer'.
             set /A $currentPhpVersionId=currentPhpVersionId+%%b
             set /A $currentUserEnvPathId=$currentUserEnvPathId+%%a
@@ -146,17 +185,15 @@ rem   Display PHP Versions
 rem ------------------------
 
 rem Set the window.
-title WampServer PHP CLI Version Changer v%$scriptVersion%
 color %$colorNormal%
 
-
-rem Show the title.
+rem Show the header.
 echo:
 echo   Available PHP CLI Versions
 echo   --------------------------
 echo:
 
-rem Display all available list of PHP folder names.
+rem List all installed PHP folder names.
 for /L %%a in (1,1,%$lastAvailablePhpVersionsArrayId%) do (
     if %%a equ %$currentPhpVersionId% (
         echo   %%a - !$availablePhpVersionsArray[%%a]! - Current
@@ -201,15 +238,15 @@ for /L %%a in (1,1,%$lastUsersEnvironmentalPathArrayId%) do (
 )
 
 rem Add the selected PHP folder path to the end of the $usersEnvironmentalPathString.
-set $result=%$result%%$pathToPhps%!$availablePhpVersionsArray[%$newSelectionId%]!
+set $result=%$result%%$pathToPhpFolders%!$availablePhpVersionsArray[%$newSelectionId%]!
 
 rem Set the $usersEnvironmentalPathString.
 setx path "%$result%" >nul
 
 
-rem --------------------
-rem   Exit Subroutines
-rem --------------------
+rem ------------------------------
+rem   Exit Subroutines - Success
+rem ------------------------------
 
 rem The update was successful.
 :updateSuccessful
@@ -237,6 +274,11 @@ if %$cliMode% equ 0 (
 
 exit 0
 
+
+rem ------------------------------
+rem   Exit Subroutines - Failure
+rem ------------------------------
+
 rem An invalid selection was given.
 :invalidSelectionGiven
 
@@ -250,13 +292,49 @@ if %$cliMode% equ 0 (
 
 exit 1
 
-rem An invalid $pathToPhps was given.
-:invalidPathToPhpsGiven
+rem ----------------------------
+rem   Exit Subroutines - Error
+rem ----------------------------
+
+rem An invalid $customInstallPath was given.
+:invalidCustomInstallPathGiven
 
 if %$cliMode% equ 0 (
     color %$colorFailure%
     echo:
-    echo   The $pathToPhps path "%$pathToPhps%" does not exist.
+    echo   The $customInstallPath path "%$customInstallPath%" does not exist.
+    echo:
+    echo   Press any key to exit.
+    pause >nul
+)
+
+exit 1
+
+rem Both of the default install paths are missing.
+:defaultInstallPathsMissing
+if %$cliMode% equ 0 (
+    color %$colorFailure%
+    echo:
+    echo   Neither of the default install paths exists.
+    echo:
+    echo   1. %$defaultInstallPath[0]%
+    echo   2. %$defaultInstallPath[1]%
+    echo:
+    echo   Wampserver does not appear to be installed.
+    echo:
+    echo   Press any key to exit.
+    pause >nul
+)
+
+exit 1
+
+rem An invalid $pathToPhpFolders was given.
+:invalidPathToPhpFoldersGiven
+
+if %$cliMode% equ 0 (
+    color %$colorFailure%
+    echo:
+    echo   The $pathToPhpFolders path "%$pathToPhpFolders%" does not exist.
     echo:
     echo   See the WampServer website for help.
     echo:

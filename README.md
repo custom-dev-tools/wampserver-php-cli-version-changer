@@ -14,17 +14,17 @@ At just over 7kB the CLI Changer script is small enough to be saved anywhere in 
 **Tip:** Once you have save the CLI Changer script, create a desktop shortcut to it for quick and easy access.
 
 ## Configuration
-If using a WampServer 32-bit version with default settings, then no configuration is necessary.
+No configuration is necessary if your installed WampServer in its default directory.
 
-If using a WampServer 64-bit version **OR** a different install path was used during installation, then follow the steps below:
-
-1. Open the CLI Changer script in your preferred text editor.
-2. Change the value of the `$pathToInstall` variable to match that of your WampServer installation path. **Note:** If your path has spaces in it then the line should look like this: `"$pathToInstall=C:\wamp server"` 
-3. Once you have changed the value, save and close your editor.
-
-For your reference, the default WampServer install paths are:
+The default installation directories are:
 - `C:\wamp` - For 32-bit installations.
 - `C:\wamp64` - For 64-bit installations.
+
+If you installed WampServer in a custom directory, then follow the steps below:
+
+1. Open the CLI Changer script in your preferred text editor.
+2. Append your custom install path to the `$customInstallPath` variable.
+3. Save the file and close your editor.
 
 Example: A customised WampServer install path.
 ```
@@ -32,9 +32,11 @@ rem +------------------------------------------------+
 rem |            User Defined Variable(s)            |
 rem +------------------------------------------------+
 
-rem WampServer install path.
-set $pathToInstall=D:\WampServer64
+rem WampServer custom install path.
+set $customInstallPath=D:\WampServer 64-Bit
 ```
+
+ **IMPORTANT:** Do not add quotation marks around your custom installation path, even if the path contains spaces.
 
 ## How To Use
 There are two ways you can use the CLI Changer script.
@@ -94,7 +96,7 @@ From a Bash or Powershell prompt:
 $ start "C:\path\to\cli_changer.bat" php7.2.3
 ```
 
-**Note 1:** You will need to enclose the CLI Changer script path in double quotation marks if the path contains any spaces.
+**Note 1:** You will need to enclose the CLI Changer script path in quotes if the path contains any spaces.
 
 **Note 2:** You will need to know the available PHP CLI version(s) in advance prior to using this command.
 
@@ -110,7 +112,7 @@ Following execution, an exit code will be given:
 As of WampServer v3.1.2 the below error message may be displayed.
 
 ```
-ERROR C:/wamp or PHP in PATH"
+Error C:/wamp or PHP in PATH
 ```
 
 Clicking on this error will open a command window displaying the below message.
@@ -130,7 +132,7 @@ Wampserver does not use, modify or require the PATH environmental variable.
 Using a PATH on Wampserver or PHP version
 is detrimental to the proper functioning of Wampserver.
 
-Press ENTER top continue...
+Press ENTER to continue...
 ```
 
 This error can be suppressed by right-clicking the WampServer icon in the taskbar notification area and selecting: _Wamp Settings -> Do not verify PATH_
