@@ -1,5 +1,5 @@
 # WampServer PHP CLI Version Changer
-WampServer PHP CLI version changer is a Microsoft Windows batch script that allows you to easily add and then change between available WampServer PHP CLI versions using the users environmental path.
+WampServer PHP CLI Version Changer is a Microsoft Windows batch script that allows you to easily change between installed WampServer PHP CLI versions using the users environmental path.
 
 ## Minimum Requirements
 The following are required for the CLI Changer script to function correctly.
@@ -11,20 +11,18 @@ No installation is required.
 
 At just over 7kB the CLI Changer script is small enough to be saved anywhere in your file system.
 
-**Note:** To operate seamlessly the Microsoft Windows "cmd.exe" executable must be in your system path. The standard installation path is ``C:\Windows\System32``. 
-
 **Tip:** Once you have save the CLI Changer script, create a desktop shortcut to it for quick and easy access.
 
 ## Configuration
 If using a WampServer 32-bit version with default settings, then no configuration is necessary.
 
-If using a WampServer 64-bit version **OR** a different install path was set during installation, then follow the steps below:
+If using a WampServer 64-bit version **OR** a different install path was used during installation, then follow the steps below:
 
 1. Open the CLI Changer script in your preferred text editor.
-2. Change the value of the `$pathToInstall` variable to match that of your WampServer install path, taking care **not to** use quotes around the value.
+2. Change the value of the `$pathToInstall` variable to match that of your WampServer installation path. **Note:** If your path has spaces in it then the line should look like this: `"$pathToInstall=C:\wamp server"` 
 3. Once you have changed the value, save and close your editor.
 
-For reference, the default WampServer install paths are:
+For your reference, the default WampServer install paths are:
 - `C:\wamp` - For 32-bit installations.
 - `C:\wamp64` - For 64-bit installations.
 
@@ -45,9 +43,9 @@ There are two ways you can use the CLI Changer script.
 * Command line interface (CLI).
 
 ### Text Based User Interface (TUI)
-Upon running the CLI Changer script you will be presented with a numbered list of available PHP versions that you can select from.
+Upon running the CLI Changer script you will be presented with a numbered list of installed PHP versions that you can select from.
 
-The exact list of available PHP CLI versions is dependent on what you currently have in your WampServer PHP addon folder.
+The exact list of installed PHP CLI versions is dependent on what you currently have in your WampServer PHP addon folder.
 
 ```
 Available PHP CLI Versions
@@ -77,7 +75,7 @@ To select a PHP version:
 
 The CLI Changer script will display the newly set PHP version number and prompt you to press any key to exit.
 
-**Note:** The newly selected PHP version will only be available to new command line windows opened after the change. Existing windows will still reference any previously set PHP version.
+**Note:** The newly selected PHP version will only be available to new command line windows. Existing windows will still reference the previously set PHP version.
 
 To exit the CLI Changer script without making any changes just press the ENTER key.
 
@@ -86,11 +84,17 @@ Should you make an invalid selection or should the selection be the same as the 
 ### Command Line Interface (CLI)
 To update the PHP CLI version number directly from the command line, you can pass in the desired PHP version via the scripts first argument. This will bypass the selection screen and go straight to setting the desired version number.
 
+From a CMD prompt:
 ```
-cmd_prompt>: start "path\to\cli_changer.bat" php7.2.3
+C:\>: "C:\path\to\cli_changer.bat" php7.2.3
 ```
 
-**Note 1:** You will need to enclose the scripts path in double quotation marks if the path contains any spaces.
+From a Bash or Powershell prompt:
+```
+$ start "C:\path\to\cli_changer.bat" php7.2.3
+```
+
+**Note 1:** You will need to enclose the CLI Changer script path in double quotation marks if the path contains any spaces.
 
 **Note 2:** You will need to know the available PHP CLI version(s) in advance prior to using this command.
 
