@@ -138,7 +138,7 @@ for /L %%a in (1,1,%$lastUsersEnvironmentalPathArrayId%) do (
     rem Loop through the $availablePhpVersionsArray.
     for /L %%b in (1,1,%$lastAvailablePhpVersionsArrayId%) do (
         rem Check if the users environmental path string matches the path to the available PHP version string.
-        if "!$usersEnvironmentalPathArray[%%a]!"=="%$pathToPhpFolders%!$availablePhpVersionsArray[%%b]!" (
+        if "!$usersEnvironmentalPathArray[%%a]!"=="%$pathToPhpFolders%\!$availablePhpVersionsArray[%%b]!" (
             rem Force the 'for' command parameters into type 'integer'.
             set /A $currentPhpVersionId=currentPhpVersionId+%%b
             set /A $currentUserEnvPathId=$currentUserEnvPathId+%%a
@@ -238,7 +238,7 @@ for /L %%a in (1,1,%$lastUsersEnvironmentalPathArrayId%) do (
 )
 
 rem Add the selected PHP folder path to the end of the $usersEnvironmentalPathString.
-set $result=%$result%%$pathToPhpFolders%!$availablePhpVersionsArray[%$newSelectionId%]!
+set $result=%$result%%$pathToPhpFolders%\!$availablePhpVersionsArray[%$newSelectionId%]!
 
 rem Set the $usersEnvironmentalPathString.
 setx path "%$result%" >nul
