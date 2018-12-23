@@ -20,7 +20,7 @@ rem +------------------------------------------------+
 rem ---------------------
 rem   Default Variables
 rem ---------------------
-set $scriptVersion=1.1.0
+set $scriptVersion=1.1.1
 
 set $defaultInstallPath[0]=C:\wamp
 set $defaultInstallPath[1]=C:\wamp64
