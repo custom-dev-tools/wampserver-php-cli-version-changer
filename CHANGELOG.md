@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.1.1] - 2018-12-23
+
+### Fixed
+- Fixed missing directory separator between path to php folders and currently / newly selected php version folder(s).
+
 ## [1.1.0] - 2018-08-24
 
 ### Added
