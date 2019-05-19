@@ -1,19 +1,42 @@
 # WampServer PHP CLI Version Changer
+
+[![GitHub version](https://img.shields.io/github/tag/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?label=WampServer-PHP-CLI-Version-Changer&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/releases)
+![Maintained](https://img.shields.io/static/v1.svg?label=maintened&message=yes&color=informational&logo=github)
+[![Stars](https://img.shields.io/github/stars/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?color=brightgreen&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/stargazers)
+ 
+[![GitHub License](https://img.shields.io/github/license/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?color=informational&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/blob/master/LICENSE-MIT)
+[![GitHub last commit](https://img.shields.io/github/last-commit/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?logo=github)](https://github.com/midnight-coding/grunt-cache-killer/commits/master)
+[![GitHub open issues](https://img.shields.io/github/issues-raw/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?color=brightgreen&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/issues?q=is%3Aopen+is%3Aissue)
+[![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?color=brightgreen&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/issues?q=is%3Aissue+is%3Aclosed)
+
 WampServer PHP CLI Version Changer is a Microsoft Windows batch script that allows you to easily change between installed WampServer PHP CLI versions using the users environmental path.
 
+## Table Of Contents
+
+* [Minimum Requirements](#minimum-requirements)
+* [Installation](#installation)
+* [Configuration](#configuration)
+* [How To Use](#how-to-use)
+  * [Text Based User Interface (TUI)](#text-based-user-interface--TUI-)
+  * [Command Line Interface (CLI)](#command-line-interface--CLI-)
+* [FAQ's](#faq-s)
+
 ## Minimum Requirements
+
 The following are required for the CLI Changer script to function correctly.
 - Microsoft Windows 7 and up.
 - WampServer v3.0.0 and up.
 
 ## Installation
+
 No installation is required.
 
-At just over 7kB the CLI Changer script is small enough to be saved anywhere in your file system.
+At just over 10kB the CLI Changer script is small enough to be saved anywhere in your file system.
 
 **Tip:** Once you have save the CLI Changer script, create a desktop shortcut to it for quick and easy access.
 
 ## Configuration
+
 No configuration is necessary if your installed WampServer in its default directory.
 
 The default installation directories are:
@@ -24,7 +47,7 @@ If you installed WampServer in a custom directory, then follow the steps below:
 
 1. Open the CLI Changer script in your preferred text editor.
 2. Append your custom install path to the `$customInstallPath` variable.
-3. Save the file and close your editor.
+3. Save the file and close your text editor.
 
 Example: A customised WampServer install path.
 ```
@@ -39,12 +62,14 @@ set $customInstallPath=D:\WampServer 64-Bit
  **IMPORTANT:** Do not add quotation marks around your custom installation path, even if the path contains spaces.
 
 ## How To Use
+
 There are two ways you can use the CLI Changer script.
 
 * Text based user interface (TUI).
 * Command line interface (CLI).
 
 ### Text Based User Interface (TUI)
+
 Upon running the CLI Changer script you will be presented with a numbered list of installed PHP versions that you can select from.
 
 The exact list of installed PHP CLI versions is dependent on what you currently have in your WampServer PHP addon folder.
@@ -84,6 +109,7 @@ To exit the CLI Changer script without making any changes just press the ENTER k
 Should you make an invalid selection or should the selection be the same as the currently selected version then you will receive feedback indicating so.
 
 ### Command Line Interface (CLI)
+
 To update the PHP CLI version number directly from the command line, you can pass in the desired PHP version via the scripts first argument. This will bypass the selection screen and go straight to setting the desired version number.
 
 From a CMD prompt:
@@ -108,7 +134,21 @@ Following execution, an exit code will be given:
 **Tip:** Calling scripts via the command line is common during (automated) development, testing and deployment. EG: Incorporate it into your build files...
 
 ## FAQ's
+
+### How does the environment 'user' and 'system' path variables work? 
+
+Environment 'path' variables allow the user (and system) to call an executable without the need to use the executables absolute (full) path. Windows parses the path variables from left to right, with the 'user' path being appended to the 'system' path. (IE: path = system.path + user.path)
+
+When the user (or the user's script) calls the `php.exe` executable, the path pointing to the executable will be used. If an environment path contains two or more paths to a PHP executable, then only the first one found is executed. The other php executables will never be called, ever.
+
+Based on this information and pursuant to the successful selection of a PHP version number, this script scans and then removes any and all reference to any php executable path(s) found within the environment 'user' path prior to appending the selected PHP version path.
+
+The PHP CLI version number returned by typing `php -v` at the command prompt should be the same as that selected by you when using this script. If it is not, there is a strong chance that there is reference to a PHP executable within the environment 'system' path. To correct this situation, you must remove this reference from the environment 'system' path manually.
+
+Both the environment 'user' and 'system' paths can be accessed by clicking 'Start' -> 'Control Panel' -> 'System' -> 'Advanced system settings' -> 'Environment Variables...'
+
 ### How do I remove the error at the bottom of the WampServer right-click menu?
+
 As of WampServer v3.1.2 the below error message may be displayed.
 
 ```
@@ -137,11 +177,17 @@ Press ENTER to continue...
 
 This error can be suppressed by right-clicking the WampServer icon in the taskbar notification area and selecting: _Wamp Settings -> Do not verify PATH_
 
-**Question 1:** Why would you want to suppress this error? Because currently, WampServer does not have the ability to change the CLI version of PHP should your script(s) require a specific version.
+#### Why would you want to suppress this error?
 
-**Question 2:** But isn't that what right-clicking the WampServer icon in the taskbar notification area and selecting: _Tools -> Change PHP CLI version_ does? No, it doesn't. This selection currently changes the CLI version that the _WampServer's scripts use_, not what your scripts use when called from the command line.
+Because currently, WampServer does not have the ability to change the CLI version of PHP should your script(s) require a specific version.
 
-**Question 3:** So can I safely use this script? Currently, yes (but this may change if WampServer decides in the future to begin using either or both of your systems environmental path variables).
+#### But isn't that what right-clicking the WampServer icon in the taskbar notification area and selecting: _Tools -> Change PHP CLI version_ does?
+
+No, it doesn't. This selection currently changes the CLI version that the _WampServer's scripts use_, not what your scripts use when called from the command line.
+
+#### So can I safely use this script?
+
+Currently, yes (but this may change if WampServer decides in the future to begin using either or both of your systems environmental path variables).
 
 ### How do I add more PHP versions?
 To add more PHP versions to your WampServer v3 installation visit [SourceForge](https://sourceforge.net/projects/wampserver/files/WampServer%203/WampServer%203.0.0/Addons/Php/).

@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.2.0] - 2019-05-19
+
+### Added
+- Ability to remove from the environment user path multiple PHP version paths.
+- Ability to remove from the environment user path any PHP version path(s) that are not in the list of available PHP versions.
+
+### Changed
+- Updated readme.md
+
 ## [1.1.1] - 2018-12-23
 
 ### Fixed
