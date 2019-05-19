@@ -20,7 +20,7 @@ rem +------------------------------------------------+
 rem ---------------------
 rem   Default Variables
 rem ---------------------
-set $scriptVersion=1.1.1
+set $scriptVersion=1.2.0
 
 set $defaultInstallPath[0]=C:\wamp
 set $defaultInstallPath[1]=C:\wamp64
@@ -77,17 +77,17 @@ rem -------------------
 rem   PHP Folder Path
 rem -------------------
 
-rem Set the $pathToPhpFolders path.
+rem Set the path to the PHP folders.
 if %$installPath:~-1% neq \ (
     set $pathToPhpFolders=%$installPath%\%$pathToPhpFolders%
 ) else (
     set $pathToPhpFolders=%$installPath%%$pathToPhpFolders%
 )
 
-rem Check the $pathToPhpFolders path exists.
+rem Check the path to the PHP folders exists.
 if not exist "%$pathToPhpFolders%" goto invalidPathToPhpFoldersGiven
 
-rem Iterate through folders in the the $pathToPhpFolders path adding them to the availablePhpVersionsArray.
+rem Iterate through the folders in the the $pathToPhpFolders variable adding them to the $availablePhpVersionsArray.
 set counter=0
 
 for /F "delims=" %%a in ('dir %$pathToPhpFolders% /AD /B') do (
@@ -104,11 +104,11 @@ rem   Users Environmental Path
 rem ----------------------------
 
 rem Get the users environmental path string.
-for /f "usebackq tokens=2,*" %%a in (`reg.exe query HKCU\Environment /v PATH`) do (
+for /F "usebackq tokens=2,*" %%a in (`reg.exe query HKCU\Environment /v PATH`) do (
     set $usersEnvironmentalPathString=%%b
 )
 
-rem Explode the users environmental path string into an array.
+rem Using recursion, explode the users environmental path string into an array.
 set counter=0
 
 :explode
@@ -128,16 +128,18 @@ rem ----------------------------
 rem   Match PHP Folder Version
 rem ----------------------------
 
-rem Only the first PHP path is used by the computer if more than one PHP path be detected in the users
-rem environmental path. Therefore, there is no need to detect multiple PHP paths, only the first one.
+rem If there is more than one PHP path in the users environmental path, the operating system
+rem will only use the first one. Therefore, we only need to match the first one.
 set $currentPhpVersionId=0
 set $currentUserEnvPathId=0
 
-rem Loop through the $usersEnvironmentalPathArray.
+rem Iterate through the users environmental path array.
 for /L %%a in (1,1,%$lastUsersEnvironmentalPathArrayId%) do (
-    rem Loop through the $availablePhpVersionsArray.
+
+    rem Iterate through the available PHP versions array.
     for /L %%b in (1,1,%$lastAvailablePhpVersionsArrayId%) do (
-        rem Check if the users environmental path string matches the path to the available PHP version string.
+    
+        rem Check if the users environmental path string matches the (combined) full path of the available PHP version string.
         if "!$usersEnvironmentalPathArray[%%a]!"=="%$pathToPhpFolders%\!$availablePhpVersionsArray[%%b]!" (
             rem Force the 'for' command parameters into type 'integer'.
             set /A $currentPhpVersionId=currentPhpVersionId+%%b
@@ -160,8 +162,10 @@ if "%~1" neq "" (
     set $cliMode=1
     set $newSelectionId=0
 
-    rem Find the $newSelectionId by matching the name to the id.
+    rem Iterate through the available PHP versions array.
     for /L %%a in (1,1,%$lastAvailablePhpVersionsArrayId%) do (
+    
+        rem If a matching installed PHP folder name is found, set the new selection id.
         if "%1"=="!$availablePhpVersionsArray[%%a]!" (
             set $newSelectionId=%%a
         )
@@ -177,7 +181,7 @@ rem   Hack(s)
 rem -----------
 
 rem Hack to define a backspace so the 'set /p' command can be offset from the windows edge.
-for /f %%a in ('"prompt $H &echo on &for %%b in (1) do rem"') do set backspace=%%a
+for /F %%a in ('"prompt $H &echo on &for %%b in (1) do rem"') do set backspace=%%a
 
 
 rem ------------------------
@@ -193,8 +197,10 @@ echo   Available PHP CLI Versions
 echo   --------------------------
 echo:
 
-rem List all installed PHP folder names.
+rem Iterate though the available PHP versions array.
 for /L %%a in (1,1,%$lastAvailablePhpVersionsArrayId%) do (
+
+    rem Check if the listed version matches the current version.
     if %%a equ %$currentPhpVersionId% (
         echo   %%a - !$availablePhpVersionsArray[%%a]! - Current
     ) else (
@@ -214,7 +220,7 @@ rem --------------------
 :checkUserInput
 
 rem Check if the new selection comprises of digits.
-echo %$newSelectionId%| findstr /r "^[1-9][0-9]*$">nul
+echo %$newSelectionId%| findstr /R "^[1-9][0-9]*$" >nul
 if %errorlevel% neq 0 goto invalidSelectionGiven
 
 rem Check if the new selection is a valid selection.
@@ -228,20 +234,39 @@ rem ---------------------------------
 rem   Update Users Environment Path
 rem ---------------------------------
 
-rem Rebuild the $usersEnvironmentalPathString excluding any previously set PHP folder path.
+rem Rebuild the users environmental path string excluding any and all previously
+rem set PHP folder paths no matter where they are located within the string.
 set "$usersEnvironmentalPathString="
 
+rem Iterate through the users environmental path array.
 for /L %%a in (1,1,%$lastUsersEnvironmentalPathArrayId%) do (
-    if !$currentUserEnvPathId! neq %%a (
-        set $result=!$result!!$usersEnvironmentalPathArray[%%a]!;
+
+    rem Remove any trailing slash.           
+    if !$usersEnvironmentalPathArray[%%a]:~-1! equ \ (
+        set $path=!$usersEnvironmentalPathArray[%%a]:~0,-1!
+    ) else (
+        set $path=!$usersEnvironmentalPathArray[%%a]!
+    )
+        
+    rem Get the last segment of the path.
+    for %%b in (!$path!) do (
+        set $segment=%%~nxb
+    )
+    
+    rem Check the segment for a matching regex expression. IE: Any PHP folder.
+    echo !$segment! | findstr /R /C:"^php[1-9][0-9]*\.[0-9][0-9]*\.*[0-9]*[0-9]*" >nul
+    
+    rem If a match is not found, append the path to the users environmental path string.
+    if !errorlevel! neq 0 (
+        set $usersEnvironmentalPathString=!$usersEnvironmentalPathString!!$usersEnvironmentalPathArray[%%a]!;
     )
 )
 
-rem Add the selected PHP folder path to the end of the $usersEnvironmentalPathString.
-set $result=%$result%%$pathToPhpFolders%\!$availablePhpVersionsArray[%$newSelectionId%]!
+rem Add the selected PHP folder path to the end of the users environmental path string.
+set $usersEnvironmentalPathString=%$usersEnvironmentalPathString%%$pathToPhpFolders%\!$availablePhpVersionsArray[%$newSelectionId%]!
 
-rem Set the $usersEnvironmentalPathString.
-setx path "%$result%" >nul
+rem Set the users environmental path string.
+setx path "%$usersEnvironmentalPathString%" >nul
 
 
 rem ------------------------------
