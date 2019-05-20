@@ -1,15 +1,10 @@
 # WampServer PHP CLI Version Changer
 
-[![GitHub version](https://img.shields.io/github/tag/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?label=WampServer-PHP-CLI-Version-Changer&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/releases)
-![Maintained](https://img.shields.io/static/v1.svg?label=maintened&message=yes&color=informational&logo=github)
-[![Stars](https://img.shields.io/github/stars/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?color=brightgreen&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/stargazers)
+[![GitHub version](https://img.shields.io/github/tag/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?label=WampServer-PHP-CLI-Version-Changer&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/releases) ![Maintained](https://img.shields.io/static/v1.svg?label=maintened&message=yes&color=informational&logo=github) [![Stars](https://img.shields.io/github/stars/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?color=brightgreen&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/stargazers)
  
-[![GitHub License](https://img.shields.io/github/license/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?color=informational&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/blob/master/LICENSE-MIT)
-[![GitHub last commit](https://img.shields.io/github/last-commit/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?logo=github)](https://github.com/midnight-coding/grunt-cache-killer/commits/master)
-[![GitHub open issues](https://img.shields.io/github/issues-raw/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?color=brightgreen&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/issues?q=is%3Aopen+is%3Aissue)
-[![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?color=brightgreen&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/issues?q=is%3Aissue+is%3Aclosed)
+[![GitHub License](https://img.shields.io/github/license/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?color=informational&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/blob/master/LICENSE-MIT) [![GitHub last commit](https://img.shields.io/github/last-commit/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?logo=github)](https://github.com/midnight-coding/grunt-cache-killer/commits/master) [![GitHub open issues](https://img.shields.io/github/issues-raw/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?color=brightgreen&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/issues?q=is%3Aopen+is%3Aissue) [![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/midnight-coding/WampServer-PHP-CLI-Version-Changer.svg?color=brightgreen&logo=github)](https://github.com/midnight-coding/WampServer-PHP-CLI-Version-Changer/issues?q=is%3Aissue+is%3Aclosed)
 
-WampServer PHP CLI Version Changer is a Microsoft Windows batch script that allows you to easily change between installed WampServer PHP CLI versions using the users environmental path.
+WampServer PHP CLI Version Changer is a Microsoft Windows batch script that allows you to easily change between installed WampServer PHP CLI versions using the users environment 'path' variable.
 
 ## Table Of Contents
 
@@ -17,9 +12,9 @@ WampServer PHP CLI Version Changer is a Microsoft Windows batch script that allo
 * [Installation](#installation)
 * [Configuration](#configuration)
 * [How To Use](#how-to-use)
-  * [Text Based User Interface (TUI)](#text-based-user-interface--TUI-)
-  * [Command Line Interface (CLI)](#command-line-interface--CLI-)
-* [FAQ's](#faq-s)
+  * [Text Based User Interface (TUI)](#text-based-user-interface-tui)
+  * [Command Line Interface (CLI)](#command-line-interface-cli)
+* [FAQ's](#faqs)
 
 ## Minimum Requirements
 
@@ -135,11 +130,11 @@ Following execution, an exit code will be given:
 
 ## FAQ's
 
-### How does the environment 'user' and 'system' path variables work? 
+### What are environment path variables and how do they work? 
 
 Environment 'path' variables allow the user (and system) to call an executable without the need to use the executables absolute (full) path. Windows parses the path variables from left to right, with the 'user' path being appended to the 'system' path. (IE: path = system.path + user.path)
 
-When the user (or the user's script) calls the `php.exe` executable, the path pointing to the executable will be used. If an environment path contains two or more paths to a PHP executable, then only the first one found is executed. The other php executables will never be called, ever.
+When the user (or the user's script) calls `php` or `php.exe`, the path pointing to the executable will be used. If an environment path contains two or more paths to a PHP executable, then only the first one found is executed. The other php executables will never be called, ever.
 
 Based on this information and pursuant to the successful selection of a PHP version number, this script scans and then removes any and all reference to any php executable path(s) found within the environment 'user' path prior to appending the selected PHP version path.
 
@@ -149,7 +144,7 @@ Both the environment 'user' and 'system' paths can be accessed by clicking 'Star
 
 ### How do I remove the error at the bottom of the WampServer right-click menu?
 
-As of WampServer v3.1.2 the below error message may be displayed.
+When using WampServer v3.1.2 - v3.1.7 inclusive, the below error message may be displayed.
 
 ```
 Error C:/wamp or PHP in PATH
@@ -187,7 +182,7 @@ No, it doesn't. This selection currently changes the CLI version that the _WampS
 
 #### So can I safely use this script?
 
-Currently, yes (but this may change if WampServer decides in the future to begin using either or both of your systems environmental path variables).
+Currently, yes (but this may change if WampServer decides in the future to begin using either or both of your systems environment path variables).
 
 ### How do I add more PHP versions?
 To add more PHP versions to your WampServer v3 installation visit [SourceForge](https://sourceforge.net/projects/wampserver/files/WampServer%203/WampServer%203.0.0/Addons/Php/).

@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.2.1] - 2019-05-20
+
+### Changed
+- Updated readme.md reflecting removal of warning when the PATH environment variable contains a path on Wamp or a version of PHP.
+- Renamed licence.md to license.md
+- Updated version number.
+
 ## [1.2.0] - 2019-05-19
 
 ### Added
