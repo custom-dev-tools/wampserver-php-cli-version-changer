@@ -20,7 +20,7 @@ rem +------------------------------------------------+
 rem ---------------------
 rem   Default Variables
 rem ---------------------
-set $scriptVersion=1.2.1
+set $scriptVersion=1.2.2
 
 set $defaultInstallPath[0]=C:\wamp
 set $defaultInstallPath[1]=C:\wamp64
@@ -138,7 +138,7 @@ for /L %%a in (1,1,%$lastUsersEnvironmentalPathArrayId%) do (
 
     rem Iterate through the available PHP versions array.
     for /L %%b in (1,1,%$lastAvailablePhpVersionsArrayId%) do (
-    
+
         rem Check if the users environmental path string matches the (combined) full path of the available PHP version string.
         if "!$usersEnvironmentalPathArray[%%a]!"=="%$pathToPhpFolders%\!$availablePhpVersionsArray[%%b]!" (
             rem Force the 'for' command parameters into type 'integer'.
@@ -164,7 +164,7 @@ if "%~1" neq "" (
 
     rem Iterate through the available PHP versions array.
     for /L %%a in (1,1,%$lastAvailablePhpVersionsArrayId%) do (
-    
+
         rem If a matching installed PHP folder name is found, set the new selection id.
         if "%1"=="!$availablePhpVersionsArray[%%a]!" (
             set $newSelectionId=%%a
@@ -210,7 +210,7 @@ for /L %%a in (1,1,%$lastAvailablePhpVersionsArrayId%) do (
 
 rem Prompt the user to make a new selection.
 echo:
-set /p $newSelectionId=%backspace%  Selection (1-%$lastAvailablePhpVersionsArrayId%): 
+set /p $newSelectionId=%backspace%  Selection (1-%$lastAvailablePhpVersionsArrayId%):
 echo:
 
 
@@ -241,21 +241,21 @@ set "$usersEnvironmentalPathString="
 rem Iterate through the users environmental path array.
 for /L %%a in (1,1,%$lastUsersEnvironmentalPathArrayId%) do (
 
-    rem Remove any trailing slash.           
+    rem Remove any trailing slash.
     if !$usersEnvironmentalPathArray[%%a]:~-1! equ \ (
         set $path=!$usersEnvironmentalPathArray[%%a]:~0,-1!
     ) else (
         set $path=!$usersEnvironmentalPathArray[%%a]!
     )
-        
+
     rem Get the last segment of the path.
     for %%b in (!$path!) do (
         set $segment=%%~nxb
     )
-    
+
     rem Check the segment for a matching regex expression. IE: Any PHP folder.
     echo !$segment! | findstr /R /C:"^php[1-9][0-9]*\.[0-9][0-9]*\.*[0-9]*[0-9]*" >nul
-    
+
     rem If a match is not found, append the path to the users environmental path string.
     if !errorlevel! neq 0 (
         set $usersEnvironmentalPathString=!$usersEnvironmentalPathString!!$usersEnvironmentalPathArray[%%a]!;
