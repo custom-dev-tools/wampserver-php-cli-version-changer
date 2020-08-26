@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.2.3] - 2020-08-26
+
+### Fixed
+- Added .gitattributes file to normalize EOL's for Windows OS when code is downloaded as ZIP file.
+
+## Changed
+- Updated version number.
+
 ## [1.2.2] - 2020-05-09
 
 ### Changed
