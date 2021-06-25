@@ -1,7 +1,5 @@
 @echo off
-cls
 setlocal EnableDelayedExpansion EnableExtensions
-mode con: cols=75 lines=40
 
 
 rem +------------------------------------------------+
@@ -28,6 +26,7 @@ set $defaultInstallPath[1]=C:\wamp64
 set $pathToPhpFolders=bin\php
 
 set $cliMode=0
+set $tempMode=0
 
 set $colorNormal=08
 set $colorSuccess=0A
@@ -158,6 +157,15 @@ rem --------------------
 rem Check if the CLI is being used.
 if "%~1" neq "" (
 
+	rem Check for temp set.
+	if "%~1" equ "/temp" (
+		set $tempMode=1
+		goto hackSection
+	)
+	if "%~2" equ "/temp" (
+		set $tempMode=1
+	)
+	
     rem Set the CLI mode flag.
     set $cliMode=1
     set $newSelectionId=0
@@ -179,6 +187,7 @@ if "%~1" neq "" (
 rem -----------
 rem   Hack(s)
 rem -----------
+:hackSection
 
 rem Hack to define a backspace so the 'set /p' command can be offset from the windows edge.
 for /F %%a in ('"prompt $H &echo on &for %%b in (1) do rem"') do set backspace=%%a
@@ -189,7 +198,11 @@ rem   Display PHP Versions
 rem ------------------------
 
 rem Set the window.
-color %$colorNormal%
+if %$tempMode% equ 0 (
+	cls
+	mode con: cols=75 lines=40
+	color %$colorNormal%
+)
 
 rem Show the header.
 echo:
@@ -263,10 +276,23 @@ for /L %%a in (1,1,%$lastUsersEnvironmentalPathArrayId%) do (
 )
 
 rem Add the selected PHP folder path to the end of the users environmental path string.
-set $usersEnvironmentalPathString=%$usersEnvironmentalPathString%%$pathToPhpFolders%\!$availablePhpVersionsArray[%$newSelectionId%]!
+set $usersEnvironmentalPathString=%$pathToPhpFolders%\!$availablePhpVersionsArray[%$newSelectionId%]!^;%$usersEnvironmentalPathString%
 
 rem Set the users environmental path string.
-setx path "%$usersEnvironmentalPathString%" >nul
+if %$tempMode% equ 0 (
+	rem Set path permanently for all new cmd windows.
+	setx path "%$usersEnvironmentalPathString%" >nul
+	goto updateSuccessful
+) else (
+	rem Set path temporarily for current environment window.
+	REM TODO:
+	REM BUG: THIS SET PATH INTO SETLOCAL BLOCK AND NOT EFFECTIVE CURRENT ENVIRONMENT
+	REM      AND IF USE ENDLOCAL CAN NOT ACCESS TO VARIABLE SET OUTSIDE SETLOCAL
+	REM      SUMMARY, AT THE MOMENT, THE ONLY PROBLEM IS BECAUSE OF THE USE OF SETLOCAL
+	set PATH="%$usersEnvironmentalPathString%"
+	echo "%PATH%"
+	goto updateTempSuccessful
+)
 
 
 rem ------------------------------
@@ -298,6 +324,18 @@ if %$cliMode% equ 0 (
 )
 
 exit 0
+
+rem The update temp path was successful.
+:updateTempSuccessful
+
+if %$cliMode% equ 0 (
+    echo   Update Temp Successful - The PHP CLI version is now !$availablePhpVersionsArray[%$newSelectionId%]!
+    echo:
+    echo   Press any key to exit.
+    pause >nul
+)
+
+exit /b
 
 
 rem ------------------------------
