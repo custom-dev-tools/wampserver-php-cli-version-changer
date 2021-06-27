@@ -265,8 +265,14 @@ for /L %%a in (1,1,%$lastUsersEnvironmentalPathArrayId%) do (
 rem Add the selected PHP folder path to the end of the users environmental path string.
 set $usersEnvironmentalPathString=%$usersEnvironmentalPathString%%$pathToPhpFolders%\!$availablePhpVersionsArray[%$newSelectionId%]!
 
-rem Set the users environmental path string.
-setx path "%$usersEnvironmentalPathString%" >nul
+rem Check if the change is for an open session only.
+if "%~2" eq "--temp" (
+    rem Temporary change the users environmental path string in the open session only.
+    set path "%$usersEnvironmentalPathString%" >nul
+) else (
+    rem Permanently change the users environmental path string.
+    setx path "%$usersEnvironmentalPathString%" >nul
+)
 
 
 rem ------------------------------
