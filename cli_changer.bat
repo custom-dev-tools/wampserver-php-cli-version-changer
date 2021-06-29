@@ -26,6 +26,7 @@ set $defaultInstallPath[1]=C:\wamp64
 set $pathToPhpFolders=bin\php
 
 set $cliMode=0
+set $cliSessionMode=0
 
 set $colorNormal=08
 set $colorSuccess=0A
@@ -34,7 +35,22 @@ set $colorFailure=0C
 
 
 rem --------------------
+rem   Operation By CLI
 rem --------------------
+
+rem Check if the CLI is being used.
+if "%1" neq "" (
+    set $cliMode=1
+
+    rem Check if the CLI session mode is being used.
+    if "%2"=="-t" (
+        set $cliSessionMode=1
+    )
+
+    if "%2"=="--temp" (
+        set $cliSessionMode=1
+    )
+)
 
 rem --------------------
 rem   Operation by TUI
@@ -166,10 +182,9 @@ rem   Operation By CLI
 rem --------------------
 
 rem Check if the CLI is being used.
-if "%~1" neq "" (
+if %$cliMode% equ 1 (
 
-    rem Set the CLI mode flag.
-    set $cliMode=1
+    rem Set the newly selected id.
     set $newSelectionId=0
 
     rem Iterate through the available PHP versions array.
@@ -272,12 +287,21 @@ for /L %%a in (1,1,%$lastUsersEnvironmentalPathArrayId%) do (
 rem Add the selected PHP folder path to the end of the users environmental path string.
 set $usersEnvironmentalPathString=%$usersEnvironmentalPathString%%$pathToPhpFolders%\!$availablePhpVersionsArray[%$newSelectionId%]!
 
-rem Check if the change is for an open session only.
-if "%~2" eq "--temp" (
-    rem Temporary change the users environmental path string in the open session only.
-    set path "%$usersEnvironmentalPathString%" >nul
+rem Check if the CLI session mode is being used.
+if %$cliSessionMode% equ 1 (
+    rem Set 'session' path (which is a combination of both system and user environmental variables).
+
+    rem 1: %path% contains both system and user environmental variables.
+    rem 2: Get %path% string, remove 'permanent' php path and add 'temporary' php path.
+
+    echo Success: The session PHP CLI version is now !$availablePhpVersionsArray[%$newSelectionId%]!
+
+    endlocal && set "Path=%$usersEnvironmentalPathString%" >nul
+
+    exit /B 0
+
 ) else (
-    rem Permanently change the users environmental path string.
+    rem Set the user environmental variables.
     setx path "%$usersEnvironmentalPathString%" >nul
 )
 
