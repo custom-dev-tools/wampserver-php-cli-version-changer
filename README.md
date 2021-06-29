@@ -14,6 +14,7 @@ WampServer PHP CLI Version Changer is a Microsoft Windows batch script that allo
 * [How To Use](#how-to-use)
   * [Text Based User Interface (TUI)](#text-based-user-interface-tui)
   * [Command Line Interface (CLI)](#command-line-interface-cli)
+    * [Session Mode](#command-line-interface-cli---session-mode)
 * [FAQ's](#faqs)
 
 ## Minimum Requirements
@@ -62,6 +63,7 @@ There are two ways you can use the CLI Changer script.
 
 * Text based user interface (TUI).
 * Command line interface (CLI).
+  * Session mode
 
 ### Text Based User Interface (TUI)
 
@@ -120,6 +122,31 @@ $ start "C:\path\to\cli_changer.bat" php7.2.3
 **Note 1:** You will need to enclose the CLI Changer script path in quotes if the path contains any spaces.
 
 **Note 2:** You will need to know the available PHP CLI version(s) in advance prior to using this command.
+
+Following execution, an exit code will be given:
+
+- `0` - Success
+- `1` - Failure
+
+**Tip:** Calling scripts via the command line is common during (automated) development, testing and deployment. EG: Incorporate it into your build files...
+
+### Command Line Interface (CLI) - Session Mode
+
+Should you have the need to temporarily change the PHP version number within the open command window (session) only and not across the whole system (multiple sessions) then you should use the `--temp` option.
+
+From a CMD prompt:
+```
+C:\>: "C:\path\to\cli_changer.bat" php7.2.3 --temp
+```
+
+From a Bash or Powershell prompt:
+```
+$ start "C:\path\to\cli_changer.bat" php7.2.3 --temp
+```
+
+The short command line option `-t` can also be used in place of `--temp`.
+
+**Note:** Enclosing the script path in quotes if it contains spaces and knowing the available PHP CLI version(s) in advance is still required.
 
 Following execution, an exit code will be given:
 
