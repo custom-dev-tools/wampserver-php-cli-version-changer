@@ -1,5 +1,4 @@
 @echo off
-cls
 setlocal EnableDelayedExpansion EnableExtensions
 
 
@@ -33,8 +32,20 @@ set $colorSuccess=0A
 set $colorWarning=0E
 set $colorFailure=0C
 
-rem Set the title.
-title WampServer PHP CLI Version Changer v%$scriptVersion%
+
+rem --------------------
+rem --------------------
+
+rem --------------------
+rem   Operation by TUI
+rem --------------------
+
+rem Check if the TUI is being used.
+if %$cliMode% equ 0 (
+    cls
+    title WampServer PHP CLI Version Changer v%$scriptVersion%
+    color %$colorNormal%
+)
 
 
 rem -----------------
@@ -186,9 +197,6 @@ for /F %%a in ('"prompt $H &echo on &for %%b in (1) do rem"') do set backspace=%
 rem ------------------------
 rem   Display PHP Versions
 rem ------------------------
-
-rem Set the window.
-color %$colorNormal%
 
 rem Show the header.
 echo:
