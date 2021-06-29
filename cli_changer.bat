@@ -295,9 +295,17 @@ if %$cliMode% equ 0 (
     echo:
     echo   Press any key to exit.
     pause >nul
+    exit 0
+) else (
+    echo Success - The PHP CLI version is now !$availablePhpVersionsArray[%$newSelectionId%]!
+    exit /B 0
 )
 
-exit 0
+
+rem -----------------------------
+rem   Exit Subroutines - Notice
+rem -----------------------------
+
 
 rem A current selection was given.
 :currentSelectionGiven
@@ -308,9 +316,11 @@ if %$cliMode% equ 0 (
     echo:
     echo   Press any key to exit.
     pause >nul
+    exit 0
+) else (
+    echo Notice: The PHP CLI version remains unchanged.
+    exit /B 0
 )
-
-exit 0
 
 
 rem ------------------------------
@@ -326,9 +336,12 @@ if %$cliMode% equ 0 (
     echo:
     echo   Press any key to exit.
     pause >nul
+    exit 1
+) else (
+    echo Failure: An invalid php version was given - The PHP CLI version remains unchanged.
+    exit /B 1
 )
 
-exit 1
 
 rem ----------------------------
 rem   Exit Subroutines - Error
@@ -344,27 +357,36 @@ if %$cliMode% equ 0 (
     echo:
     echo   Press any key to exit.
     pause >nul
+    exit 1
+) else (
+    echo Error: The $customInstallPath path "%$customInstallPath%" does not exist.
+    exit /B 1
 )
 
-exit 1
 
 rem Both of the default install paths are missing.
 :defaultInstallPathsMissing
 if %$cliMode% equ 0 (
     color %$colorFailure%
     echo:
-    echo   Neither of the default install paths exists.
+    echo   Neither of the default installation paths exists.
     echo:
-    echo   1. %$defaultInstallPath[0]%
-    echo   2. %$defaultInstallPath[1]%
+    echo    1. %$defaultInstallPath[0]%
+    echo    2. %$defaultInstallPath[1]%
     echo:
-    echo   Wampserver does not appear to be installed.
+    echo   WampServer does not appear to be installed.
     echo:
     echo   Press any key to exit.
     pause >nul
+    exit 1
+) else (
+    echo Error: Neither of the default installation paths exists.
+    echo         1. %$defaultInstallPath[0]%
+    echo         2. %$defaultInstallPath[1]%
+    echo        WampServer does not appear to be installed.
+    exit /B 1
 )
 
-exit 1
 
 rem An invalid $pathToPhpFolders was given.
 :invalidPathToPhpFoldersGiven
@@ -378,6 +400,9 @@ if %$cliMode% equ 0 (
     echo:
     echo   Press any key to exit.
     pause >nul
+    exit 1
+) else (
+    echo Error: The $pathToPhpFolders path "%$pathToPhpFolders%" does not exist.
+    echo        See the WampServer website for help.
+    exit /B 1
 )
-
-exit 1
