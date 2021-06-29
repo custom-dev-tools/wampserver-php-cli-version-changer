@@ -1,7 +1,6 @@
 @echo off
 cls
 setlocal EnableDelayedExpansion EnableExtensions
-mode con: cols=75 lines=40
 
 
 rem +------------------------------------------------+
