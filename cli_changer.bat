@@ -15,9 +15,9 @@ rem +------------------------------------------------+
 rem |           DO NOT EDIT BELOW THIS LINE          |
 rem +------------------------------------------------+
 
-rem ---------------------
-rem   Default Variables
-rem ---------------------
+rem -------------------
+rem  Default Variables
+rem -------------------
 set $scriptVersion=1.3.0
 
 set $defaultInstallPath[0]=C:\wamp
@@ -34,9 +34,9 @@ set $colorWarning=0E
 set $colorFailure=0C
 
 
-rem --------------------
-rem   Operation By CLI
-rem --------------------
+rem ------------------
+rem  Operation By CLI
+rem ------------------
 
 rem Check if the CLI is being used.
 if "%1" neq "" (
@@ -52,9 +52,10 @@ if "%1" neq "" (
     )
 )
 
-rem --------------------
-rem   Operation by TUI
-rem --------------------
+
+rem ------------------
+rem  Operation by TUI
+rem ------------------
 
 rem Check if the TUI is being used.
 if %$cliMode% equ 0 (
@@ -64,9 +65,9 @@ if %$cliMode% equ 0 (
 )
 
 
-rem -----------------
-rem   Install Paths
-rem -----------------
+rem ---------------
+rem  Install Paths
+rem ---------------
 
 rem Test for a custom install path.
 if defined $customInstallPath (
@@ -99,9 +100,9 @@ rem Exit if unable to find installation path.
 if not defined $installPath goto defaultInstallPathsMissing
 
 
-rem -------------------
-rem   PHP Folder Path
-rem -------------------
+rem -----------------
+rem  PHP Folder Path
+rem -----------------
 
 rem Set the path to the PHP folders.
 if %$installPath:~-1% neq \ (
@@ -125,9 +126,9 @@ rem Set the last available PHP versions array id.
 set $lastAvailablePhpVersionsArrayId=!counter!
 
 
-rem ----------------------------
-rem   Users Environmental Path
-rem ----------------------------
+rem --------------------------
+rem  Users Environmental Path
+rem --------------------------
 
 rem Get the users environmental path string.
 for /F "usebackq tokens=2,*" %%a in (`reg.exe query HKCU\Environment /v PATH`) do (
@@ -150,9 +151,9 @@ rem Set the last users environmental path array id.
 set $lastUsersEnvironmentalPathArrayId=!counter!
 
 
-rem ----------------------------
-rem   Match PHP Folder Version
-rem ----------------------------
+rem --------------------------
+rem  Match PHP Folder Version
+rem --------------------------
 
 rem If there is more than one PHP path in the users environmental path, the operating system
 rem will only use the first one. Therefore, we only need to match the first one.
@@ -177,9 +178,9 @@ for /L %%a in (1,1,%$lastUsersEnvironmentalPathArrayId%) do (
 :break
 
 
-rem --------------------
-rem   Operation By CLI
-rem --------------------
+rem ------------------
+rem  Operation By CLI
+rem ------------------
 
 rem Check if the CLI is being used.
 if %$cliMode% equ 1 (
@@ -201,17 +202,17 @@ if %$cliMode% equ 1 (
 )
 
 
-rem -----------
-rem   Hack(s)
-rem -----------
+rem ---------
+rem  Hack(s)
+rem ---------
 
 rem Hack to define a backspace so the 'set /p' command can be offset from the windows edge.
 for /F %%a in ('"prompt $H &echo on &for %%b in (1) do rem"') do set backspace=%%a
 
 
-rem ------------------------
-rem   Display PHP Versions
-rem ------------------------
+rem ----------------------
+rem  Display PHP Versions
+rem ----------------------
 
 rem Show the header.
 echo:
@@ -236,9 +237,9 @@ set /p $newSelectionId=%backspace%  Selection (1-%$lastAvailablePhpVersionsArray
 echo:
 
 
-rem --------------------
-rem   Check User Input
-rem --------------------
+rem ------------------
+rem  Check User Input
+rem ------------------
 :checkUserInput
 
 rem Check if the new selection comprises of digits.
@@ -252,10 +253,10 @@ rem Check if the new selection is the same as the current selection.
 if %$newSelectionId% equ %$currentPhpVersionId% goto currentSelectionGiven
 
 
-rem ---------------------------------
-rem   Update Users Environment Path
-rem TODO: Does this need to move down into is own block / function as well?
-rem ---------------------------------
+rem -------------------------------
+rem  Update Users Environment Path
+rem  TODO: Does this need to move down into is own block / function as well?
+rem -------------------------------
 
 rem Rebuild the users environmental path string excluding any and all previously
 rem set PHP folder paths no matter where they are located within the string.
@@ -290,9 +291,9 @@ rem: TODO: move down into setx path code block.
 set $usersEnvironmentalPathString=%$usersEnvironmentalPathString%%$pathToPhpFolders%\!$availablePhpVersionsArray[%$newSelectionId%]!
 
 
-rem -------------------------------------------
-rem   Perform action depending on entry point
-rem -------------------------------------------
+rem -----------------------------------------
+rem  Perform action depending on entry point
+rem -----------------------------------------
 
 rem Check if the CLI session mode is being used.
 if %$cliSessionMode% equ 1 (
@@ -346,13 +347,17 @@ rem Explode the environmental path string.
 exit /B
 
 
-rem Implode the environmental path string (whilst excluding any PHP versions).
-:implodeEnvironmentalPathExcludingPhps
+rem ----------------------------
+rem  Implode path excluding PHP
+rem ----------------------------
+:implodePathExcludingPhps
 
 exit /B
 
 
-rem Add the selected PHP path to environmental path string.
+rem ---------------------------
+rem  Include selected PHP path
+rem ---------------------------
 :includeSelectedPhpPath
 
 exit /B
@@ -362,7 +367,9 @@ rem ============================================================================
 rem                                               Success Message
 rem ====================================================================================================================
 
-rem The update was successful.
+rem -------------------
+rem  Update successful
+rem -------------------
 :updateSuccessful
 
 if %$cliMode% equ 0 (
@@ -378,7 +385,9 @@ if %$cliMode% equ 0 (
 )
 
 
-rem The 'session' update was successful.
+rem ---------------------------
+rem  Session update successful
+rem ---------------------------
 :sessionUpdateSuccessful
 
 echo Success: This sessions PHP CLI version is now !$availablePhpVersionsArray[%$newSelectionId%]!
@@ -390,7 +399,9 @@ rem ============================================================================
 rem                                               Notice Message
 rem ====================================================================================================================
 
-rem A current selection was given.
+rem -------------------------
+rem  Current selection given
+rem -------------------------
 :currentSelectionGiven
 
 if %$cliMode% equ 0 (
@@ -410,7 +421,9 @@ rem ============================================================================
 rem                                               Failure Message
 rem ====================================================================================================================
 
-rem An invalid selection was given.
+rem -------------------------
+rem  Invalid selection given
+rem -------------------------
 :invalidSelectionGiven
 
 if %$cliMode% equ 0 (
@@ -430,7 +443,9 @@ rem ============================================================================
 rem                                                Error Messages
 rem ====================================================================================================================
 
-rem An invalid $customInstallPath was given.
+rem -----------------------------------
+rem  Invalid custom install path given
+rem -----------------------------------
 :invalidCustomInstallPathGiven
 
 if %$cliMode% equ 0 (
@@ -447,7 +462,9 @@ if %$cliMode% equ 0 (
 )
 
 
-rem Both of the default install paths are missing.
+rem -------------------------------
+rem  Default install paths missing
+rem -------------------------------
 :defaultInstallPathsMissing
 if %$cliMode% equ 0 (
     color %$colorFailure%
@@ -471,7 +488,9 @@ if %$cliMode% equ 0 (
 )
 
 
-rem An invalid $pathToPhpFolders was given.
+rem ----------------------------------
+rem  Invalid path to PHP folder given
+rem ----------------------------------
 :invalidPathToPhpFoldersGiven
 
 if %$cliMode% equ 0 (
