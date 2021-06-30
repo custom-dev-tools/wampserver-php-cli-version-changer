@@ -254,6 +254,7 @@ if %$newSelectionId% equ %$currentPhpVersionId% goto currentSelectionGiven
 
 rem ---------------------------------
 rem   Update Users Environment Path
+rem TODO: Does this need to move down into is own block / function as well?
 rem ---------------------------------
 
 rem Rebuild the users environmental path string excluding any and all previously
@@ -285,30 +286,81 @@ for /L %%a in (1,1,%$lastUsersEnvironmentalPathArrayId%) do (
 )
 
 rem Add the selected PHP folder path to the end of the users environmental path string.
+rem: TODO: move down into setx path code block.
 set $usersEnvironmentalPathString=%$usersEnvironmentalPathString%%$pathToPhpFolders%\!$availablePhpVersionsArray[%$newSelectionId%]!
+
+
+rem -------------------------------------------
+rem   Perform action depending on entry point
+rem -------------------------------------------
 
 rem Check if the CLI session mode is being used.
 if %$cliSessionMode% equ 1 (
-    rem Set 'session' path (which is a combination of both system and user environmental variables).
+    rem Get path (which is a combination of both the system environmental path and the user environmental path).
 
-    rem 1: %path% contains both system and user environmental variables.
-    rem 2: Get %path% string, remove 'permanent' php path and add 'temporary' php path.
 
-    echo Success: The session PHP CLI version is now !$availablePhpVersionsArray[%$newSelectionId%]!
+    rem Explode the path.
+    call :explodeEnvironmentalPath
 
+    rem Remove any existing PHP version references.
+    call :implodeEnvironmentalPathExcludingPhps
+
+    rem Add the selected PHP path.
+    call :includeSelectedPhpPath
+
+    rem Message must come first as we loose reference to new selection variable.
+    call :sessionUpdateSuccessful
+
+    rem Set the sessions environmental path variable.
     endlocal && set "Path=%$usersEnvironmentalPathString%" >nul
 
     exit /B 0
-
 ) else (
-    rem Set the user environmental variables.
+    rem Get the users environmental path.
+
+
+    rem Explode the path.
+    call :explodeEnvironmentalPath
+
+    rem Remove any existing PHP version references.
+    call :implodeEnvironmentalPathExcludingPhps
+
+    rem Add the selected PHP path.
+    call :includeSelectedPhpPath
+
+    rem Set the user environmental path variable.
     setx path "%$usersEnvironmentalPathString%" >nul
+
+    rem Show the successful message.
+    goto updateSuccessful
 )
 
 
-rem ------------------------------
-rem   Exit Subroutines - Success
-rem ------------------------------
+rem ====================================================================================================================
+rem                                                      Functions
+rem ====================================================================================================================
+
+rem Explode the environmental path string.
+:explodeEnvironmentalPath
+
+exit /B
+
+
+rem Implode the environmental path string (whilst excluding any PHP versions).
+:implodeEnvironmentalPathExcludingPhps
+
+exit /B
+
+
+rem Add the selected PHP path to environmental path string.
+:includeSelectedPhpPath
+
+exit /B
+
+
+rem ====================================================================================================================
+rem                                               Success Message
+rem ====================================================================================================================
 
 rem The update was successful.
 :updateSuccessful
@@ -326,10 +378,17 @@ if %$cliMode% equ 0 (
 )
 
 
-rem -----------------------------
-rem   Exit Subroutines - Notice
-rem -----------------------------
+rem The 'session' update was successful.
+:sessionUpdateSuccessful
 
+echo Success: This sessions PHP CLI version is now !$availablePhpVersionsArray[%$newSelectionId%]!
+
+exit /B
+
+
+rem ====================================================================================================================
+rem                                               Notice Message
+rem ====================================================================================================================
 
 rem A current selection was given.
 :currentSelectionGiven
@@ -347,9 +406,9 @@ if %$cliMode% equ 0 (
 )
 
 
-rem ------------------------------
-rem   Exit Subroutines - Failure
-rem ------------------------------
+rem ====================================================================================================================
+rem                                               Failure Message
+rem ====================================================================================================================
 
 rem An invalid selection was given.
 :invalidSelectionGiven
@@ -367,9 +426,9 @@ if %$cliMode% equ 0 (
 )
 
 
-rem ----------------------------
-rem   Exit Subroutines - Error
-rem ----------------------------
+rem ====================================================================================================================
+rem                                                Error Messages
+rem ====================================================================================================================
 
 rem An invalid $customInstallPath was given.
 :invalidCustomInstallPathGiven
