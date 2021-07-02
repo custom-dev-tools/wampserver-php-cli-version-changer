@@ -14,7 +14,7 @@ WampServer PHP CLI Version Changer is a Microsoft Windows batch script that allo
 * [How To Use](#how-to-use)
   * [Text Based User Interface (TUI)](#text-based-user-interface-tui)
   * [Command Line Interface (CLI)](#command-line-interface-cli)
-    * [Session Mode](#command-line-interface-cli---session-mode)
+    * [Session Mode](#session-mode)
 * [FAQ's](#faqs)
 
 ## Minimum Requirements
@@ -27,7 +27,7 @@ The following are required for the CLI Changer script to function correctly.
 
 No installation is required.
 
-At just over 10kB the CLI Changer script is small enough to be saved anywhere in your file system.
+At just over 13KB the CLI Changer script is small enough to be saved anywhere in your file system.
 
 **Tip:** Once you have save the CLI Changer script, create a desktop shortcut to it for quick and easy access.
 
@@ -52,6 +52,7 @@ rem |            User Defined Variable(s)            |
 rem +------------------------------------------------+
 
 rem WampServer custom install path.
+rem Note: Trailing slash is not required.
 set $customInstallPath=D:\WampServer 64-Bit
 ```
 
@@ -130,9 +131,9 @@ Following execution, an exit code will be given:
 
 **Tip:** Calling scripts via the command line is common during (automated) development, testing and deployment. EG: Incorporate it into your build files...
 
-### Command Line Interface (CLI) - Session Mode
+#### Session Mode
 
-Should you have the need to temporarily change the PHP version number within the open command window (session) only and not across the whole system (multiple sessions) then you should use the `--temp` option.
+Should you have the need to only change the PHP version number within an open command window (session) and not across your whole system then you can use the `--temp` option.
 
 From a CMD prompt:
 ```
@@ -144,7 +145,7 @@ From a Bash or Powershell prompt:
 $ start "C:\path\to\cli_changer.bat" php7.2.3 --temp
 ```
 
-The short command line option `-t` can also be used in place of `--temp`.
+The short command line option `-t` is also available.
 
 **Note:** Enclosing the script path in quotes if it contains spaces and knowing the available PHP CLI version(s) in advance is still required.
 
@@ -153,7 +154,7 @@ Following execution, an exit code will be given:
 - `0` - Success
 - `1` - Failure
 
-**Tip:** Calling scripts via the command line is common during (automated) development, testing and deployment. EG: Incorporate it into your build files...
+**Note:** Using the `--temp` or `-t` option will only change the PHP version number within that command window. Multiple command windows can be open and the PHP version number changed without affecting other open command windows. 
 
 ## FAQ's
 
@@ -163,11 +164,14 @@ Environment 'path' variables allow the user (and system) to call an executable w
 
 When the user (or the user's script) calls `php` or `php.exe`, the path pointing to the executable will be used. If an environment path contains two or more paths to a PHP executable, then only the first one found is executed. The other php executables will never be called, ever.
 
-Based on this information and pursuant to the successful selection of a PHP version number, this script scans and then removes any and all reference to any php executable path(s) found within the environment 'user' path prior to appending the selected PHP version path.
+Based on this information and pursuant to the successful selection of a PHP version number, this script scans and then removes any and all reference to any php executable path(s) found within the environment 'user' path (or the cmd window 'session' path) prior to appending the selected PHP version path.
 
 The PHP CLI version number returned by typing `php -v` at the command prompt should be the same as that selected by you when using this script. If it is not, there is a strong chance that there is reference to a PHP executable within the environment 'system' path. To correct this situation, you must remove this reference from the environment 'system' path manually.
 
-Both the environment 'user' and 'system' paths can be accessed by clicking 'Start' -> 'Control Panel' -> 'System' -> 'Advanced system settings' -> 'Environment Variables...'
+Access the environment 'user' and 'system' paths by: 
+
+* Windows 7: Clicking 'Start' -> 'Control Panel' -> 'System' -> 'Advanced system settings' -> 'Environment Variables...'
+* Windows 10: Clicking 'Start Search' -> Type 'env' -> Click the result 'Edit system environment variables' -> 'Environment Variables...'
 
 ### How do I remove the error at the bottom of the WampServer right-click menu?
 
