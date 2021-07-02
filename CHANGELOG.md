@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.3.0] - 2021-07-02
+
+### Added
+- Added ability to change PHP version within an open CMD Window session only.
+
+### Updated
+- Updated readme.md reflecting the new feature.
+- Updated version number.
+
 ## [1.2.3] - 2020-08-26
 
 ### Fixed
