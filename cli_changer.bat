@@ -7,7 +7,8 @@ rem |            User Defined Variable(s)            |
 rem +------------------------------------------------+
 
 rem WampServer custom install path.
-set $customInstallPath=
+rem Note: Trailing slash is not required.
+set $customInstallPath=E:\WampServer64
 
 
 
@@ -52,9 +53,6 @@ if "%1" neq "" (
         set $cliSessionMode=1
     )
 ) else (
-    rem Hack to define a backspace so the 'set /p' command can be offset from the windows edge.
-    for /F %%a in ('"prompt $H &echo on &for %%b in (1) do rem"') do set backspace=%%a
-
     rem TUI mode in use.
     cls
     title WampServer PHP CLI Version Changer v%$scriptVersion%
@@ -101,7 +99,7 @@ rem -----------------------
 rem  Check PHP Folder Path
 rem -----------------------
 
-rem Set the path to the PHP folders.
+rem Set the absolute path to the PHP folders.
 if %$installPath:~-1% neq \ (
     set $pathToPhpFolders=%$installPath%\%$pathToPhpFolders%
 ) else (
@@ -132,14 +130,15 @@ rem ----------------------------
 rem  Explode Environmental Path
 rem ----------------------------
 
-rem Get the correctly referenced path string.
+rem Get the correctly referenced environmental path.
 if %$cliSessionMode% equ 0 (
     rem Get the 'users' environmental path.
     for /F "usebackq tokens=2,*" %%a in (`reg.exe query HKCU\Environment /v PATH`) do (
         set $pathString=%%b
 )) else (
-    rem Get the command windows 'session' environmental path.
-    rem This path is a combination of the system environmental path and the user environmental path.
+    rem Get the command window 'session' environmental path.
+    rem Note: This path is a combination of the system environmental
+    rem       path and the user environmental path.
     set $pathString=%Path%
 )
 
@@ -163,8 +162,9 @@ rem ----------------------------
 rem  Find Active PHP Version(s)
 rem ----------------------------
 
-rem If there is more than one PHP reference in the path, the operating system will
-rem only use the first one. Therefore, we only need to match the first one.
+rem As the operating system only uses the first found PHP reference in the environmental path, then we will as well.
+rem Note: If a PHP version other than an installed version is found, it will not be shown as an option,
+rem       though it will be removed from the environmental path when the newly selected version is added.
 set $currentPhpVersionId=0
 
 rem Iterate through the path array.
@@ -204,14 +204,17 @@ if %$cliMode% equ 1 (
         )
     )
 
-    rem Bypass displaying anything.
+    rem Bypass displaying the TUI.
     goto checkUserInput
 )
 
 
-rem ----------------------
-rem  Display PHP Versions
-rem ----------------------
+rem ------------------
+rem  Operation by TUI
+rem ------------------
+
+rem Hack to define a backspace so the 'set /p' command can be offset from the windows edge.
+for /F %%a in ('"prompt $H &echo on &for %%b in (1) do rem"') do set backspace=%%a
 
 rem Show the header.
 echo:
@@ -230,7 +233,7 @@ for /L %%a in (1,1,%$availablePhpCount%) do (
     )
 )
 
-rem Prompt the user to make a new selection.
+rem Prompt the user to make a selection.
 echo:
 set /p $newSelectionId=%backspace%  Selection (1-%$availablePhpCount%):
 echo:
@@ -256,7 +259,7 @@ rem --------------------------
 rem  Implode Environment Path
 rem --------------------------
 
-rem Rebuild the path string while excluding any and all found PHP path.
+rem Rebuild the path string while excluding any and all found PHP paths.
 set "$pathString="
 
 rem Iterate through the path array.
@@ -277,7 +280,7 @@ for /L %%a in (1,1,%$pathArrayCount%) do (
     rem Check the last segment for a matching regex expression. IE: Any PHP folder.
     echo !$lastSegment! | findstr /R /C:"^php[1-9][0-9]*\.[0-9][0-9]*\.*[0-9]*[0-9]*" >nul
 
-    rem If a match is not found, append the path to the path string.
+    rem If a match is not found, append the path to the path string and include a trailing semicolon.
     if !errorlevel! neq 0 (
         set $pathString=!$pathString!!$pathArray[%%a]!;
     )
@@ -289,6 +292,9 @@ rem  Add Chosen PHP Path
 rem ---------------------
 
 rem Add the selected PHP folder path to the end of the path string.
+rem Note: Final path in environmental path not to include a trailing semicolon.
+rem       Adding selected PHP folder path to front of environmental path would
+rem       speed-up discoverability but unnecessarily complicate implosion.
 set $pathString=%$pathString%%$pathToPhpFolders%\!$availablePhpArray[%$newSelectionId%]!
 
 
@@ -299,17 +305,19 @@ rem ----------------------------
 rem Check if the CLI 'session' mode is being used.
 if %$cliSessionMode% equ 1 (
 
-    rem Message must come first as we loose reference to all variables.
+    rem Show the success message.
+    rem Note: Message must come first else we will loose
+    rem       reference to newly selected PHP array value.
     call :sessionUpdateSuccessful
 
-    rem Set the sessions environmental path variable.
+    rem Set the 'session' environmental path variable.
     endlocal && set "Path=%$pathString%" >nul
 
     exit /B 0
 ) else (
 
     rem Set the user environmental path variable.
-    setx path "%$pathString%" >nul
+    setx Path "%$pathString%" >nul
 
     rem Show the successful message.
     goto updateSuccessful
@@ -317,7 +325,7 @@ if %$cliSessionMode% equ 1 (
 
 
 rem ====================================================================================================================
-rem                                               Success Message
+rem                                               Success Messages
 rem ====================================================================================================================
 
 rem -------------------
@@ -333,7 +341,8 @@ if %$cliMode% equ 0 (
     pause >nul
     exit 0
 ) else (
-    echo Success - The PHP CLI version is now !$availablePhpArray[%$newSelectionId%]!
+    echo:
+    echo   Success - The PHP CLI version is now !$availablePhpArray[%$newSelectionId%]!
     exit /B 0
 )
 
@@ -343,7 +352,8 @@ rem  Session update successful
 rem ---------------------------
 :sessionUpdateSuccessful
 
-echo Success: This sessions PHP CLI version is now !$availablePhpArray[%$newSelectionId%]!
+echo:
+echo   Success: This sessions PHP CLI version is now !$availablePhpArray[%$newSelectionId%]!
 
 exit /B
 
@@ -365,7 +375,8 @@ if %$cliMode% equ 0 (
     pause >nul
     exit 0
 ) else (
-    echo Notice: The PHP CLI version remains unchanged.
+    echo:
+    echo   Notice: Current selection was given - The PHP CLI version remains unchanged.
     exit /B 0
 )
 
@@ -387,7 +398,8 @@ if %$cliMode% equ 0 (
     pause >nul
     exit 1
 ) else (
-    echo Failure: An invalid php version was given - The PHP CLI version remains unchanged.
+    echo:
+    echo   Failure: An invalid php version was given - The PHP CLI version remains unchanged.
     exit /B 1
 )
 
@@ -410,7 +422,8 @@ if %$cliMode% equ 0 (
     pause >nul
     exit 1
 ) else (
-    echo Error: The $customInstallPath path "%$customInstallPath%" does not exist.
+    echo:
+    echo   Error: The $customInstallPath path "%$customInstallPath%" does not exist.
     exit /B 1
 )
 
@@ -433,10 +446,13 @@ if %$cliMode% equ 0 (
     pause >nul
     exit 1
 ) else (
-    echo Error: Neither of the default installation paths exists.
-    echo         1. %$defaultInstallPath[0]%
-    echo         2. %$defaultInstallPath[1]%
-    echo        WampServer does not appear to be installed.
+    echo:
+    echo   Error: Neither of the default installation paths exists.
+    echo:
+    echo           1. %$defaultInstallPath[0]%
+    echo           2. %$defaultInstallPath[1]%
+    echo:
+    echo          WampServer does not appear to be installed.
     exit /B 1
 )
 
@@ -457,7 +473,9 @@ if %$cliMode% equ 0 (
     pause >nul
     exit 1
 ) else (
-    echo Error: The $pathToPhpFolders path "%$pathToPhpFolders%" does not exist.
-    echo        See the WampServer website for help.
+    echo:
+    echo   Error: The $pathToPhpFolders path "%$pathToPhpFolders%" does not exist.
+    echo:
+    echo          See the WampServer website for help.
     exit /B 1
 )
