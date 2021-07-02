@@ -8,7 +8,7 @@ rem +------------------------------------------------+
 
 rem WampServer custom install path.
 rem Note: Trailing slash is not required.
-set $customInstallPath=E:\WampServer64
+set $customInstallPath=
 
 
 
