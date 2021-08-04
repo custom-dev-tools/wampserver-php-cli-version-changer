@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.3.1] - 2021-08-04
+
+### Fixed
+- Fixed error caused by parentheses in system environmental path.
+
 ## [1.3.0] - 2021-07-02
 
 ### Added

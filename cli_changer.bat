@@ -19,7 +19,7 @@ rem +------------------------------------------------+
 rem -------------------
 rem  Default Variables
 rem -------------------
-set $scriptVersion=1.3.0
+set $scriptVersion=1.3.1
 
 set $defaultInstallPath[0]=C:\wamp
 set $defaultInstallPath[1]=C:\wamp64
@@ -139,7 +139,7 @@ if %$cliSessionMode% equ 0 (
     rem Get the command window 'session' environmental path.
     rem Note: This path is a combination of the system environmental
     rem       path and the user environmental path.
-    set $pathString=%Path%
+    set $pathString=%Path:)=^)%
 )
 
 rem Explode the path string into an array.
